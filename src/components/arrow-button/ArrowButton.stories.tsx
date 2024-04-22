@@ -1,6 +1,7 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ArrowButton } from './ArrowButton';
+import { ArrowButton, ArrowButtonProps } from './ArrowButton';
 
 const meta: Meta<typeof ArrowButton> = {
 	component: ArrowButton,
@@ -13,7 +14,7 @@ export const ArrowButtonStory: Story = {
 	render: () => {
 		return (
 			<>
-				<ArrowButton />
+				<ArrowButton onClick={() => {}} />
 			</>
 		);
 	},
