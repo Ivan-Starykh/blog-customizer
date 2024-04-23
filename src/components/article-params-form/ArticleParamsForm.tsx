@@ -4,7 +4,8 @@ import { Button } from 'components/button';
 import { Select } from '../select';
 import { OptionType } from '../select/Option';
 import styles from './ArticleParamsForm.module.scss';
-import { FontFamiliesClasses } from 'src/constants/articleProps';
+import { RadioGroup } from '../radio-group';
+import { fontFamilyOptions, fontSizeOptions } from 'src/constants/articleProps';
 
 type ArticleParamsFormProps = {
   isOpen: boolean;
@@ -15,27 +16,12 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
   const [isFormOpen, setIsFormOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const arrowButtonRef = useRef<HTMLDivElement>(null);
-  const [selectedOption, setSelectedOption] = useState<OptionType | null>(null);
-
-  const fontFamilies: FontFamiliesClasses[] = [
-    'open-sans',
-    'ubuntu',
-    'cormorant-garamond',
-    'days-one',
-    'merriweather',
-  ];
-
-  const handleChange = (option: OptionType) => {
-    setSelectedOption(option);
-  };
+  const [selectedFontFamily, setSelectedFontFamily] = useState<OptionType>(fontFamilyOptions[0]);
+  const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(fontSizeOptions[0]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node) &&
-        !arrowButtonRef.current?.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node) && !arrowButtonRef.current?.contains(event.target as Node)) {
         if (isOpen) {
           handleToggleSidebar();
         }
@@ -43,7 +29,6 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
     };
 
     document.addEventListener('click', handleClickOutside);
-
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
@@ -55,22 +40,23 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
 
   return (
     <>
-      <div ref={arrowButtonRef}>
-        <ArrowButton onClick={handleToggleSidebar} />
-      </div>
+      <div ref={arrowButtonRef}><ArrowButton onClick={handleToggleSidebar} /></div>
       <aside className={`${styles.container} ${isOpen ? styles.container_open : ''}`} ref={containerRef}>
         <form className={styles.form}>
           <h2 className={styles.title}>Задайте параметры</h2>
           <Select
-            selected={selectedOption}
-            options={fontFamilies.map((family) => ({
-              title: family,
-              value: family,
-              className: family,
-            }))}
-            placeholder="Выберите опцию"
-            onChange={handleChange}
-            title="шрифт"
+            selected={selectedFontFamily}
+            options={fontFamilyOptions}
+            placeholder="Выберите шрифт"
+            onChange={(option) => setSelectedFontFamily(option)}
+            title="Выберите шрифт"
+          />
+          <RadioGroup
+					name='radio'
+            options={fontSizeOptions}
+            selected={selectedFontSize}
+            onChange={(option) => setSelectedFontSize(option)}
+            title="Выберите размер шрифта"
           />
           <div className={styles.bottomContainer}>
             <Button title="Сбросить" type="reset" />
