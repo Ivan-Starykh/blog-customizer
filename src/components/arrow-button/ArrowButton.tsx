@@ -13,11 +13,14 @@ export const ArrowButton: React.FC<ArrowButtonProps> = ({ onClick }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
-        const sidebar = sidebarRef.current;
-        if (sidebar && !sidebar.contains(event.target as Node)) {
-          setIsOpen(false);
-        }
+      const sidebarForm = sidebarRef.current?.querySelector('form');
+      const isClickInsideButton = buttonRef.current && buttonRef.current.contains(event.target as Node);
+      const isClickInsideSidebar = sidebarRef.current && sidebarRef.current.contains(event.target as Node);
+      const isClickInsideSidebarForm = sidebarForm && sidebarForm.contains(event.target as Node);
+      const isClickInsideForm = document.forms[0]?.contains(event.target as Node);
+
+      if (isOpen && !isClickInsideButton && !isClickInsideSidebar && !isClickInsideSidebarForm && !isClickInsideForm) {
+        setIsOpen(false);
       }
     };
 
@@ -33,7 +36,7 @@ export const ArrowButton: React.FC<ArrowButtonProps> = ({ onClick }) => {
   };
 
   return (
-    <div ref={sidebarRef}>
+    <div>
       <div
         role='button'
         aria-label='Открыть/Закрыть форму параметров статьи'
