@@ -21,7 +21,6 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
         }
       }
     };
-
     document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('click', handleClickOutside);
@@ -39,6 +38,7 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
       </div>
       <aside className={`${styles.container} ${isOpen ? styles.container_open : ''}`} ref={containerRef}>
         <form className={styles.form}>
+					<h2 className={styles.title}>Задайте параметры</h2>
           <div className={styles.bottomContainer}>
             <Button title='Сбросить' type='reset' />
             <Button title='Применить' type='submit' />
