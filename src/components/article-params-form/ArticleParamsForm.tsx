@@ -46,6 +46,14 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
     setIsFormOpen(!isFormOpen);
   };
 
+	const resetForm = () => {
+		setSelectedFontFamily(fontFamilyOptions[0]);
+		setSelectedFontSize(fontSizeOptions[0]);
+		setSelectedFontColors(fontColors[0]);
+		setSelectedBackgroundColors(backgroundColors[0]);
+		setSelectedContentWidthArr(contentWidthArr[0]);
+};
+
   return (
     <>
       <div ref={arrowButtonRef}><ArrowButton onClick={handleToggleSidebar} /></div>
@@ -89,7 +97,7 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
             title="ширина контента"
           />
           <div className={styles.bottomContainer}>
-            <Button title="Сбросить" type="reset" />
+            <Button title="Сбросить" type="reset" onClick={resetForm}/>
             <Button title="Применить" type="submit" />
           </div>
         </form>
