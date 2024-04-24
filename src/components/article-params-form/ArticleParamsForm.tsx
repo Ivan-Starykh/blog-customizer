@@ -5,7 +5,8 @@ import { Select } from '../select';
 import { OptionType } from '../select/Option';
 import styles from './ArticleParamsForm.module.scss';
 import { RadioGroup } from '../radio-group';
-import { fontFamilyOptions, fontSizeOptions } from 'src/constants/articleProps';
+import { fontFamilyOptions, fontSizeOptions, fontColors, backgroundColors, contentWidthArr } from 'src/constants/articleProps';
+import { Separator } from '../separator';
 
 type ArticleParamsFormProps = {
   isOpen: boolean;
@@ -18,6 +19,9 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
   const arrowButtonRef = useRef<HTMLDivElement>(null);
   const [selectedFontFamily, setSelectedFontFamily] = useState<OptionType>(fontFamilyOptions[0]);
   const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(fontSizeOptions[0]);
+  const [selectedFontColors, setSelectedFontColors] = useState<OptionType>(fontColors[0]);
+  const [selectedBackgroundColors, setSelectedBackgroundColors] = useState<OptionType>(backgroundColors[0]);
+  const [selectedContentWidthArr, setSelectedContentWidthArr] = useState<OptionType>(contentWidthArr[0]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -49,14 +53,36 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
             options={fontFamilyOptions}
             placeholder="Выберите шрифт"
             onChange={(option) => setSelectedFontFamily(option)}
-            title="Выберите шрифт"
+            title="шрифт"
           />
           <RadioGroup
 					name='radio'
             options={fontSizeOptions}
             selected={selectedFontSize}
             onChange={(option) => setSelectedFontSize(option)}
-            title="Выберите размер шрифта"
+            title="размер шрифта"
+          />
+						<Select
+            selected={selectedFontColors}
+            options={fontColors}
+            placeholder="Выберите цвет шрифта"
+            onChange={(option) => setSelectedFontColors(option)}
+            title="цвет шрифта"
+          />
+					<Separator />
+					<Select
+            selected={selectedBackgroundColors}
+            options={backgroundColors}
+            placeholder="Выберите цвет фона"
+            onChange={(option) => setSelectedBackgroundColors(option)}
+            title="цвет фона"
+          />
+						<Select
+            selected={selectedContentWidthArr}
+            options={contentWidthArr}
+            placeholder="Выберите ширину контента"
+            onChange={(option) => setSelectedContentWidthArr(option)}
+            title="ширина контента"
           />
           <div className={styles.bottomContainer}>
             <Button title="Сбросить" type="reset" />
