@@ -17,6 +17,7 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
   const [isFormOpen, setIsFormOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const arrowButtonRef = useRef<HTMLDivElement>(null);
+  // const selectOptionRef = useRef<HTMLLiElement>(null);
   const [selectedFontFamily, setSelectedFontFamily] = useState<OptionType>(fontFamilyOptions[0]);
   const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(fontSizeOptions[0]);
   const [selectedFontColors, setSelectedFontColors] = useState<OptionType>(fontColors[0]);
@@ -25,7 +26,10 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node) && !arrowButtonRef.current?.contains(event.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node) && !arrowButtonRef.current?.contains(event.target as Node)&&
+			event.target instanceof HTMLElement && 
+			event.target.nodeName !== 'LI' 
+	) {
         if (isOpen) {
           handleToggleSidebar();
         }
