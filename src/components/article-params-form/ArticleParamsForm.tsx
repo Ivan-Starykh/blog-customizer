@@ -3,11 +3,10 @@ import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 import { Select } from '../select';
 import { OptionType } from '../select/Option';
-import styles from './ArticleParamsForm.module.scss';
 import { RadioGroup } from '../radio-group';
-import { fontFamilyOptions, fontSizeOptions, fontColors, backgroundColors, contentWidthArr, defaultArticleState } from 'src/constants/articleProps';
+import { fontFamilyOptions, fontSizeOptions, fontColors, backgroundColors, contentWidthArr } from 'src/constants/articleProps';
 import { Separator } from '../separator';
-
+import styles from './ArticleParamsForm.module.scss';
 
 type ArticleParamsFormProps = {
   isOpen: boolean;
@@ -16,14 +15,22 @@ type ArticleParamsFormProps = {
 };
 
 export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, handleToggleSidebar, applyPageState }) => {
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(isOpen);
   const containerRef = useRef<HTMLDivElement>(null);
-  const arrowButtonRef = useRef<HTMLDivElement>(null);
+	const arrowButtonRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
   const [selectedFontFamily, setSelectedFontFamily] = useState<OptionType>(fontFamilyOptions[0]);
   const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(fontSizeOptions[0]);
   const [selectedFontColors, setSelectedFontColors] = useState<OptionType>(fontColors[0]);
   const [selectedBackgroundColors, setSelectedBackgroundColors] = useState<OptionType>(backgroundColors[0]);
   const [selectedContentWidthArr, setSelectedContentWidthArr] = useState<OptionType>(contentWidthArr[0]);
+
+  const [tempFontFamily, setTempFontFamily] = useState<OptionType>(fontFamilyOptions[0]);
+  const [tempFontSize, setTempFontSize] = useState<OptionType>(fontSizeOptions[0]);
+  const [tempFontColors, setTempFontColors] = useState<OptionType>(fontColors[0]);
+  const [tempBackgroundColors, setTempBackgroundColors] = useState<OptionType>(backgroundColors[0]);
+  const [tempContentWidthArr, setTempContentWidthArr] = useState<OptionType>(contentWidthArr[0]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,54 +46,63 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
     };
   }, [isOpen, handleToggleSidebar]);
 
-  const toggleForm = () => {
-    setIsFormOpen(!isFormOpen);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const resetForm = () => {
-    setSelectedFontFamily(fontFamilyOptions[0]);
-    setSelectedFontSize(fontSizeOptions[0]);
-    setSelectedFontColors(fontColors[0]);
-    setSelectedBackgroundColors(backgroundColors[0]);
-    setSelectedContentWidthArr(contentWidthArr[0]);
-    applyPageState(defaultArticleState);
+    setTempFontFamily(fontFamilyOptions[0]);
+    setTempFontSize(fontSizeOptions[0]);
+    setTempFontColors(fontColors[0]);
+    setTempBackgroundColors(backgroundColors[0]);
+    setTempContentWidthArr(contentWidthArr[0]);
   };
 
   const handleFontFamilyChange = (option: OptionType) => {
-    setSelectedFontFamily(option);
-    applyPageState({ ...defaultArticleState, fontFamilyOption: option });
+    setTempFontFamily(option);
   };
 
   const handleFontSizeChange = (option: OptionType) => {
-    setSelectedFontSize(option);
-    applyPageState({ ...defaultArticleState, fontSizeOption: option });
+    setTempFontSize(option);
   };
 
   const handleFontColorChange = (option: OptionType) => {
-    setSelectedFontColors(option);
-    applyPageState({ ...defaultArticleState, fontColor: option });
+    setTempFontColors(option);
   };
 
   const handleBackgroundColorChange = (option: OptionType) => {
-    setSelectedBackgroundColors(option);
-    applyPageState({ ...defaultArticleState, backgroundColor: option });
+    setTempBackgroundColors(option);
   };
 
   const handleContentWidthChange = (option: OptionType) => {
-    setSelectedContentWidthArr(option);
-    applyPageState({ ...defaultArticleState, contentWidth: option });
+    setTempContentWidthArr(option);
+  };
+
+  const handleApplyChanges = () => {
+    applyPageState({
+      fontFamilyOption: tempFontFamily,
+      fontSizeOption: tempFontSize,
+      fontColor: tempFontColors,
+      backgroundColor: tempBackgroundColors,
+      contentWidth: tempContentWidthArr
+    });
+    setSelectedFontFamily(tempFontFamily);
+    setSelectedFontSize(tempFontSize);
+    setSelectedFontColors(tempFontColors);
+    setSelectedBackgroundColors(tempBackgroundColors);
+    setSelectedContentWidthArr(tempContentWidthArr);
   };
 
   return (
     <>
-      <div ref={arrowButtonRef}>
-        <ArrowButton onClick={handleToggleSidebar} />
+      <div>
+        <ArrowButton onClick={toggleSidebar} isOpen={isSidebarOpen} />
       </div>
-      <aside className={`${styles.container} ${isOpen ? styles.container_open : ''}`} ref={containerRef}>
-        <form className={styles.form}>
+      <aside className={`${styles.container} ${isSidebarOpen ? styles.container_open : ''}`} ref={containerRef}>
+        <form className={styles.form} ref={formRef}>
           <h2 className={styles.title}>Задайте параметры</h2>
           <Select
-            selected={selectedFontFamily}
+            selected={tempFontFamily}
             options={fontFamilyOptions}
             placeholder="Выберите шрифт"
             onChange={handleFontFamilyChange}
@@ -95,12 +111,12 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
           <RadioGroup
             name="radio"
             options={fontSizeOptions}
-            selected={selectedFontSize}
+            selected={tempFontSize}
             onChange={handleFontSizeChange}
             title="размер шрифта"
           />
           <Select
-            selected={selectedFontColors}
+            selected={tempFontColors}
             options={fontColors}
             placeholder="Выберите цвет шрифта"
             onChange={handleFontColorChange}
@@ -108,14 +124,14 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
           />
           <Separator />
           <Select
-            selected={selectedBackgroundColors}
+            selected={tempBackgroundColors}
             options={backgroundColors}
             placeholder="Выберите цвет фона"
             onChange={handleBackgroundColorChange}
-            title="цвет фона"
+            title={'цвет фона'}
           />
           <Select
-            selected={selectedContentWidthArr}
+            selected={tempContentWidthArr}
             options={contentWidthArr}
             placeholder="Выберите ширину контента"
             onChange={handleContentWidthChange}
@@ -123,7 +139,7 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
           />
           <div className={styles.bottomContainer}>
             <Button title="Сбросить" type="reset" onClick={resetForm} />
-            <Button title="Применить" type="submit" />
+            <Button title="Применить" type="button" onClick={handleApplyChanges} />
           </div>
         </form>
       </aside>

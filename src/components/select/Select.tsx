@@ -76,7 +76,10 @@ export const Select = (props: SelectProps) => {
           className={styles.arrow}
         />
         <div
-          className={styles.placeholder}
+          					className={clsx(
+											styles.placeholder,
+											styles[selected?.optionClassName || '']
+										)}
           data-status=""
           data-selected={!!selected?.value}
           onClick={handlePlaceHolderClick}
