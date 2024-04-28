@@ -76,6 +76,7 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 			backgroundColor: backgroundColors[0],
 			contentWidth: contentWidthArr[0],
 		});
+		handleApplyChanges();
 	}, []);
 
 	return (
