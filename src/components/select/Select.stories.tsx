@@ -26,7 +26,6 @@ const SelectWithState = () => {
 				onChange={setSelected}
 				options={options}
 				title='Название радиогруппы'
-				
 			/>
 		</>
 	);

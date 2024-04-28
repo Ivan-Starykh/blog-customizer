@@ -18,14 +18,14 @@
 	background: var(--gold, #ffc802);
 }
 
-button[type="reset"]:active {
-	background: #FFEDAB;
+button[type='reset']:active {
+	background: #ffedab;
 }
 
-button[type="submit"]:active{
+button[type='submit']:active {
 	background: #000000;
 }
 
-button[type="submit"]:active [class*="index-module__text"]{
-	color: #FFFFFF;
+button[type='submit']:active [class*='index-module__text'] {
+	color: #ffffff;
 }

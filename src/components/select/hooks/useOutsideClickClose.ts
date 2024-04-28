@@ -1,23 +1,31 @@
-import { useState, useEffect, RefObject } from 'react';
+import { useEffect } from 'react';
 
-type EventListener = (event: MouseEvent) => void;
-
-export const useOutsideClickClose = <T extends HTMLElement>(
-  ref: RefObject<T>,
-  handler: () => void
-): void => {
-  useEffect(() => {
-    const handleClickOutside: EventListener = (event) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        handler();
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [ref, handler]);
+type UseOutsideClickClose = {
+	isOpen: boolean;
+	onChange: (newValue: boolean) => void;
+	onClose?: () => void;
+	rootRef: React.RefObject<HTMLDivElement>;
 };
 
+export const useOutsideClickClose = ({
+	isOpen,
+	rootRef,
+	onClose,
+	onChange,
+}: UseOutsideClickClose) => {
+	useEffect(() => {
+		const handleClick = (event: MouseEvent) => {
+			const { target } = event;
+			if (target instanceof Node && !rootRef.current?.contains(target)) {
+				isOpen && onClose?.();
+				onChange?.(false);
+			}
+		};
+
+		window.addEventListener('click', handleClick);
+
+		return () => {
+			window.removeEventListener('click', handleClick);
+		};
+	}, [onClose, onChange, isOpen]);
+};
