@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 import { Select } from '../select';
@@ -7,6 +7,7 @@ import { RadioGroup } from '../radio-group';
 import { fontFamilyOptions, fontSizeOptions, fontColors, backgroundColors, contentWidthArr } from 'src/constants/articleProps';
 import { Separator } from '../separator';
 import styles from './ArticleParamsForm.module.scss';
+import { useOutsideClickClose } from '../select/hooks/useOutsideClickClose';
 
 type ArticleParamsFormProps = {
   isOpen: boolean;
@@ -14,12 +15,29 @@ type ArticleParamsFormProps = {
   applyPageState: (newState: any) => void;
 };
 
-export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, handleToggleSidebar, applyPageState }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(isOpen);
-  const containerRef = useRef<HTMLDivElement>(null);
-	const arrowButtonRef = useRef<HTMLDivElement>(null);
+export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
+  isOpen,
+  handleToggleSidebar,
+  applyPageState
+}) => {
+  const sidebarRef = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+				setIsSidebarOpen(false);
+			}
+		};
+	
+		document.addEventListener('mousedown', handleClickOutside);
+	
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+	
   const [selectedFontFamily, setSelectedFontFamily] = useState<OptionType>(fontFamilyOptions[0]);
   const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(fontSizeOptions[0]);
   const [selectedFontColors, setSelectedFontColors] = useState<OptionType>(fontColors[0]);
@@ -32,23 +50,9 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
   const [tempBackgroundColors, setTempBackgroundColors] = useState<OptionType>(backgroundColors[0]);
   const [tempContentWidthArr, setTempContentWidthArr] = useState<OptionType>(contentWidthArr[0]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node) && !arrowButtonRef.current?.contains(event.target as Node) && event.target instanceof HTMLElement && event.target.nodeName !== 'LI') {
-        if (isOpen) {
-          handleToggleSidebar();
-        }
-      }
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isOpen, handleToggleSidebar]);
-
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+		setIsSidebarOpen(!isSidebarOpen);
+				};
 
   const resetForm = () => {
     setTempFontFamily(fontFamilyOptions[0]);
@@ -95,11 +99,9 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ isOpen, ha
 
   return (
     <>
-      <div>
-        <ArrowButton onClick={toggleSidebar} isOpen={isSidebarOpen} />
-      </div>
-      <aside className={`${styles.container} ${isSidebarOpen ? styles.container_open : ''}`} ref={containerRef}>
-        <form className={styles.form} ref={formRef}>
+      <ArrowButton onClick={toggleSidebar} isOpen={isSidebarOpen} />
+      <aside className={`${styles.container} ${isSidebarOpen ? styles.container_open : ''}`} ref={sidebarRef}>
+        <form className={styles.form} >
           <h2 className={styles.title}>Задайте параметры</h2>
           <Select
             selected={tempFontFamily}

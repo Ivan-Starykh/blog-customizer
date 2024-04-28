@@ -17,36 +17,21 @@ type SelectProps = {
   onChange?: (selected: OptionType) => void;
   onClose?: () => void;
   title?: string;
-	fontFamilies?: FontFamiliesClasses[];
+  fontFamilies?: FontFamiliesClasses[];
 };
 
 export const Select = (props: SelectProps) => {
-  const {
-    options,
-    placeholder,
-    selected,
-    onChange,
-    onClose,
-    title,
-    fontFamilies,
-  } = props;
+  const { options, placeholder, selected, onChange, onClose, title, fontFamilies } = props;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
 
-  useOutsideClickClose({
-    isOpen,
-    rootRef,
-    onClose,
-    onChange: () => setIsOpen(false),
-  });
+  // Проверяем, определена ли функция onClose, и передаем ее в качестве параметра
+  useOutsideClickClose(rootRef, onClose ? onClose : () => {});
 
-	useEnterSubmit({
-    placeholderRef,
-    onChange: setIsOpen,
-  });
+  useEnterSubmit({ placeholderRef, onChange: () => setIsOpen(!isOpen) });
 
-	const handlePlaceHolderClick = () => {
+  const handlePlaceHolderClick = () => {
     setIsOpen((isOpen) => !isOpen);
   };
 
@@ -55,31 +40,17 @@ export const Select = (props: SelectProps) => {
     onChange?.(option);
   };
 
-	return (
+  return (
     <div className={styles.container}>
       {title && (
         <>
-          <Text size={12} weight={800} uppercase>
-            {title}
-          </Text>
+          <Text size={12} weight={800} uppercase>{title}</Text>
         </>
       )}
-      <div
-        className={styles.selectWrapper}
-        ref={rootRef}
-        data-is-active={isOpen}
-        data-testid="selectWrapper"
-      >
-        <img
-          src={arrowDown}
-          alt="иконка стрелочки"
-          className={styles.arrow}
-        />
+      <div className={styles.selectWrapper} ref={rootRef} data-is-active={isOpen} data-testid="selectWrapper">
+        <img src={arrowDown} alt="иконка стрелочки" className={styles.arrow} />
         <div
-          					className={clsx(
-											styles.placeholder,
-											styles[selected?.optionClassName || '']
-										)}
+          className={clsx(styles.placeholder, styles[selected?.optionClassName || ''])}
           data-status=""
           data-selected={!!selected?.value}
           onClick={handlePlaceHolderClick}
@@ -94,11 +65,7 @@ export const Select = (props: SelectProps) => {
         {isOpen && (
           <ul className={styles.select} data-testid="selectDropdown">
             {options.map((option) => (
-              <Option
-                key={option.value}
-                option={option}
-                onClick={() => handleOptionClick(option)}
-              />
+              <Option key={option.value} option={option} onClick={() => handleOptionClick(option)} />
             ))}
           </ul>
         )}
