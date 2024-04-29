@@ -1,14 +1,11 @@
-import { useState, useRef } from 'react';
-import type { MouseEventHandler } from 'react';
+import React, { useState, useRef } from 'react';
 import clsx from 'clsx';
-import { OptionType } from 'src/constants/articleProps';
+import { OptionType, FontFamiliesClasses } from 'src/constants/articleProps';
 import { Text } from 'components/text';
 import arrowDown from 'src/images/arrow-down.svg';
 import { Option } from './Option';
 import { isFontFamilyClass } from './helpers/isFontFamilyClass';
 import { useEnterSubmit } from './hooks/useEnterSubmit';
-import { useOutsideClickClose } from './hooks/useOutsideClickClose';
-
 import styles from './Select.module.scss';
 
 type SelectProps = {
@@ -18,32 +15,24 @@ type SelectProps = {
 	onChange?: (selected: OptionType) => void;
 	onClose?: () => void;
 	title?: string;
+	fontFamilies?: FontFamiliesClasses[];
 };
 
 export const Select = (props: SelectProps) => {
-	const { options, placeholder, selected, onChange, onClose, title } = props;
+	const { options, placeholder, selected, onChange, title } = props;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const placeholderRef = useRef<HTMLDivElement>(null);
 
-	useOutsideClickClose({
-		isOpen,
-		rootRef,
-		onClose,
-		onChange: setIsOpen,
-	});
+	useEnterSubmit({ placeholderRef, onChange: () => setIsOpen(!isOpen) });
 
-	useEnterSubmit({
-		placeholderRef,
-		onChange: setIsOpen,
-	});
+	const handlePlaceHolderClick = () => {
+		setIsOpen((isOpen) => !isOpen);
+	};
 
 	const handleOptionClick = (option: OptionType) => {
 		setIsOpen(false);
 		onChange?.(option);
-	};
-	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> = () => {
-		setIsOpen((isOpen) => !isOpen);
 	};
 
 	return (
@@ -60,17 +49,13 @@ export const Select = (props: SelectProps) => {
 				ref={rootRef}
 				data-is-active={isOpen}
 				data-testid='selectWrapper'>
-				<img
-					src={arrowDown}
-					alt='иконка стрелочки'
-					className={clsx(styles.arrow, { [styles.arrow_open]: isOpen })}
-				/>
+				<img src={arrowDown} alt='иконка стрелочки' className={styles.arrow} />
 				<div
 					className={clsx(
 						styles.placeholder,
 						styles[selected?.optionClassName || '']
 					)}
-					data-status={status}
+					data-status=''
 					data-selected={!!selected?.value}
 					onClick={handlePlaceHolderClick}
 					role='button'
@@ -87,15 +72,13 @@ export const Select = (props: SelectProps) => {
 				</div>
 				{isOpen && (
 					<ul className={styles.select} data-testid='selectDropdown'>
-						{options
-							.filter((option) => selected?.value !== option.value)
-							.map((option) => (
-								<Option
-									key={option.value}
-									option={option}
-									onClick={() => handleOptionClick(option)}
-								/>
-							))}
+						{options.map((option) => (
+							<Option
+								key={option.value}
+								option={option}
+								onClick={() => handleOptionClick(option)}
+							/>
+						))}
 					</ul>
 				)}
 			</div>
