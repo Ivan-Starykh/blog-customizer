@@ -12,12 +12,21 @@ import {
 	contentWidthArr,
 } from 'src/constants/articleProps';
 import { Separator } from '../separator';
+import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
+
+interface ArticleState {
+	fontFamilyOption: OptionType;
+	fontSizeOption: OptionType;
+	fontColor: OptionType;
+	backgroundColor: OptionType;
+	contentWidth: OptionType;
+}
 
 type ArticleParamsFormProps = {
 	isOpen: boolean;
 	handleToggleSidebar: () => void;
-	applyPageState: (newState: any) => void;
+	applyPageState: (newState: ArticleState) => void;
 };
 
 export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
@@ -50,19 +59,23 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 		};
 	}, []);
 
-	const handleOptionChange = useCallback(
-		(optionName: string, option: OptionType) => {
-			setTempOptions((prevOptions) => ({
-				...prevOptions,
-				[optionName]: option,
-			}));
-		},
-		[]
-	);
+	const handleOptionChange = (optionName: string, option: OptionType) => {
+		setTempOptions((prevOptions) => ({
+			...prevOptions,
+			[optionName]: option,
+		}));
+	};
 
-	const handleApplyChanges = useCallback(() => {
-		applyPageState(tempOptions);
-	}, [applyPageState, tempOptions]);
+	const handleApplyChanges = () => {
+		const newState: ArticleState = {
+			fontFamilyOption: tempOptions.fontFamily,
+			fontSizeOption: tempOptions.fontSize,
+			fontColor: tempOptions.fontColor,
+			backgroundColor: tempOptions.backgroundColor,
+			contentWidth: tempOptions.contentWidth,
+		};
+		applyPageState(newState);
+	};
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);
@@ -83,9 +96,9 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 		<>
 			<ArrowButton onClick={toggleSidebar} isOpen={isSidebarOpen} />
 			<aside
-				className={`${styles.container} ${
-					isSidebarOpen ? styles.container_open : ''
-				}`}
+				className={clsx(styles.container, {
+					[styles.container_open]: isSidebarOpen,
+				})}
 				ref={sidebarRef}>
 				<form className={styles.form}>
 					<h2 className={styles.title}>Задайте параметры</h2>
